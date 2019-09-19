@@ -29,13 +29,16 @@ pipeline {
       }
     }
     stage('Build') {
-    // some block
+      steps {
+      }
     }
     stage('Deploy') {
-    // some block
+      steps {
+      }
     }
     stage('Cleanup') {
-    // some block
+      steps {
+      }
     }
   }
 }
