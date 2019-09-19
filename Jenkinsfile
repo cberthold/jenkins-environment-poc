@@ -19,13 +19,20 @@ pipeline {
     stage('Configuration') {
       steps {
         echo 'Configuring...'
-        build job: 'create-env-file', parameters: [booleanParam(name: 'INPUT_CONFIRMATION', value: true), string(name: 'INPUT_ENVIRONMENT_TO_BUILD', value: 'qa')]
+        // call groovy script to execute job and save status
+        script {
+          def config_build = build job: 'create-env-file', parameters: [booleanParam(name: 'INPUT_CONFIRMATION', value: "${params.INPUT_CONFIRMATION}"), string(name: 'INPUT_ENVIRONMENT_TO_BUILD', value: "${params.INPUT_ENVIRONMENT}")]
+          // copy the artifact out of the previous job so we can stash it for others to use later
+          copyArtifacts filter: 'config.properties', fingerprintArtifacts: true, projectName: 'create-env-file', selector: specific(config_build.getId())
+        }
+        // stash the file for later use in other steps
+        stash includes: 'config.properties', name: 'CONFIG_PROPERTIES'
       }
     }
     stage('Build') {
       steps {
           echo 'Building...'
-		  copyArtifacts filter: '*.properties', fingerprintArtifacts: true, projectName: 'create-env-file', selector: upstream()
+          unstash name: 'CONFIG_PROPERTIES'
 		  sh label: 'Show configuration properties', script: 'cat config.properties'
       }
     }
