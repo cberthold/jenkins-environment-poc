@@ -25,6 +25,8 @@ pipeline {
     stage('Build') {
       steps {
           echo 'Building...'
+		  copyArtifacts filter: '*.properties', fingerprintArtifacts: true, projectName: 'create-env-file', selector: upstream()
+		  sh label: 'Show configuration properties', script: 'cat config.properties'
       }
     }
     stage('Deploy') {
