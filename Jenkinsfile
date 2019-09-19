@@ -1,10 +1,10 @@
 pipeline {
   //agent { label "docker" }    //Run everything on an agent with the docker daemon
   agent any
-  environment {
+  //environment {
     //IMAGE = readMavenPom().getArtifactId()    //Use Pipeline Utility Steps
     //VERSION = readMavenPom().getVersion()
-  }
+  //}
   stages {
     stage('Input') {
       steps {
