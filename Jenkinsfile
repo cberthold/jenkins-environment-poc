@@ -25,19 +25,23 @@ pipeline {
     }
     stage('Configuration') {
       steps {
+        echo 'Configuring...'
         build job: 'create-env-file', parameters: [booleanParam(name: 'INPUT_CONFIRMATION', value: true), string(name: 'INPUT_ENVIRONMENT_TO_BUILD', value: 'qa')]
       }
     }
     stage('Build') {
       steps {
+          echo 'Building...'
       }
     }
     stage('Deploy') {
       steps {
+        echo 'Deploying...'
       }
     }
     stage('Cleanup') {
       steps {
+        echo 'Cleaning Up...'
       }
     }
   }
