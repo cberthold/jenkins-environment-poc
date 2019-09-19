@@ -1,29 +1,21 @@
 pipeline {
   //agent { label "docker" }    //Run everything on an agent with the docker daemon
   agent any
-  //environment {
-    //IMAGE = readMavenPom().getArtifactId()    //Use Pipeline Utility Steps
-    //VERSION = readMavenPom().getVersion()
-  //}
+  parameters {
+    string(name: 'INPUT_ENVIRONMENT', description: 'Environment you are building / deploying' )
+    string(name: 'INPUT_BRANCH_OR_TAG', description: 'The branch or tag you are building/deploying' )
+    choice(name: 'INPUT_IS_PRODUCTION', choices: ['false', 'true'], description: 'Is this a production environment?')
+    booleanParam(name: 'INPUT_CONFIRMATION', description: 'The base url to override for the Identity API, leave empty to generate', defaultValue: '' )
+  }
+  environment {
+    // convert input parameters to environment variables
+    ENV_ENVIRONMENT = "${params.INPUT_ENVIRONMENT}"
+    ENV_BRANCH_OR_TAG = "${params.INPUT_BRANCH_OR_TAG}"
+    ENV_IS_PRODUCTION = "${params.INPUT_IS_PRODUCTION}"
+    ENV_CONFIRMATION = "${params.INPUT_CONFIRMATION}"
+  }
   stages {
-    stage('Input') {
-      steps {
-        script {
-          input {
-            message 'Confirmation'
-            id 'DEPLOYMENT_INPUT'
-            ok 'Build/Deploy'
-            submitterParameter 'CONFIRMED_BY'
-            parameters {
-              booleanParam defaultValue: false, description: 'Confirmation that we want to build or deploy the environment', name: 'INPUT_CONFIRMATION'
-              string defaultValue: 'qa2', description: 'the environment that will be built/deployed', name: 'INPUT_ENVIRONMENT', trim: false
-              string defaultValue: 'develop', description: 'The branch or tag that will be built/deployed', name: 'INPUT_BRANCH_TAG', trim: false
-              booleanParam defaultValue: true, description: 'For environments that allow building, this selects if we should make another build or try re-deploying the last good branch/tag', name: 'INPUT_SHOULD_BUILD'
-            }
-          }
-        }
-      }
-    }
+   
     stage('Configuration') {
       steps {
         echo 'Configuring...'
