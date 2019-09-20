@@ -30,11 +30,16 @@ pipeline {
       }
     }
     stage('Build') {
-      steps {
-          echo 'Building...'
-          unstash name: 'CONFIG_PROPERTIES'
-		  sh label: 'Show configuration properties', script: 'cat config.properties'
-      }
+		stages {
+		  stage('Stuff')
+		  {
+			  steps {
+				  echo 'Building...'
+				  unstash name: 'CONFIG_PROPERTIES'
+				  sh label: 'Show configuration properties', script: 'cat config.properties'
+			  }
+		  }
+	    }
     }
     stage('Deploy') {
       steps {
